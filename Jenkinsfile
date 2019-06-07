@@ -10,7 +10,7 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-
+        node('slave1') 
         app = docker.build("getintodevops/hellonode")
     }
 
