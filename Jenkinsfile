@@ -7,7 +7,7 @@ stage('Build docker Images') {
 				sh 'sudo docker push ganesh891/httpd:staging-${BUILD_NUMBER}'	
 				}
 			}
-stage('start the app service with 80 port'){
+stage('start Apache Service'){
 				sh 'sudo docker run -p 80:80 -d --name httpd_v_july26 ganesh891/httpd:staging-${BUILD_NUMBER}'
 				}
 stage('email notification'){
