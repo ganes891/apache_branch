@@ -1,36 +1,26 @@
-node {
-    def app
-
-    stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-
-        checkout scm
-    }
-
-    stage('Build image') {
-        /* This builds the actual image; synonymous to
-         * docker build on the command line */
-        node('slave1') 
-        app = docker.build("getintodevops/hellonode")
-    }
-
-    stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
-
-        app.inside {
-            sh 'echo "Tests passed"'
-        }
-    }
-
-    stage('Push image') {
-        /* Finally, we'll push the image with two tags:
-         * First, the incremental build number from Jenkins
-         * Second, the 'latest' tag.
-         * Pushing multiple tags is cheap, as all the layers are reused. */
-        docker.withRegistry('https://hub.docker.com', 'dockerlogin') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
-        }
-    }
-}
+node (label: 'slave1') {
+  stage('SCM Checkout'){
+       git credentialsId: 'gitlogin', url: 'https://github.com/ganes891/apache_branch.git'
+   }
+stage('Build docker Images') {
+			dir ('/tmp/workspace/devproject_pip') {
+				sudo sh 'docker build -t httpd:staging-${BUILD_NUMBER} .'
+				sudo sh 'docker tag httpd:staging-${BUILD_NUMBER} ganesh891/httpd:staging-${BUILD_NUMBER}'
+				sudo sh 'docker login -u ganesh891 -p ganesh-1'
+				sudo sh 'docker push ganesh891/httpd:staging-${BUILD_NUMBER}'	
+				}
+			}
+stage('start the app service with 80 port'){
+				sudo sh 'docker run -p 80:80 -d --name httpd_v_july26 ganesh891/httpd:staging-${BUILD_NUMBER}'
+				}
+stage('email notification'){
+			emailext (
+				subject: "Job '${env.JOB_NAME} ${env.BUILD_NUMBER}'",
+				body: """<p>Check console output at <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
+				to: "ganesan.kandasami@gmail.com",
+				from: "ganesh@tcldevjenkins.com")
+               }			
+stage('clean workspace') {
+		cleanWs()
+}			
+  }
