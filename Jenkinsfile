@@ -8,7 +8,7 @@ stage('Build docker Images') {
 				}
 			}
 stage('start Apache Service'){
-				sh 'sudo docker run -p 80:80 -d --name httpd_v_july26 ganesh891/httpd:staging-${BUILD_NUMBER}'
+				sh 'sudo docker run -p 80:80 -d --name container-${BUILD_NUMBER} ganesh891/httpd:staging-${BUILD_NUMBER}'
 				}
 stage('email notification'){
 			emailext (
