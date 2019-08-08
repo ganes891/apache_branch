@@ -1,11 +1,9 @@
 node (label: 'slave1') {
 stage('Build docker Images') {
-			dir ('/tmp/workspace/devproject_pip') {
 				sh 'sudo docker build -t httpd:staging-${BUILD_NUMBER} .'
 				sh 'sudo docker tag httpd:staging-${BUILD_NUMBER} ganesh891/httpd:staging-${BUILD_NUMBER}'
 				sh 'sudo docker login -u ganesh891 -p ganesh-1'
 				sh 'sudo docker push ganesh891/httpd:staging-${BUILD_NUMBER}'	
-				}
 			}
 stage('start Apache Service'){
 				sh 'sudo docker run -p 80:80 -d --name container-${BUILD_NUMBER} ganesh891/httpd:staging-${BUILD_NUMBER}'
