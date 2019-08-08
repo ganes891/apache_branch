@@ -1,6 +1,6 @@
 node (label: 'slave1') {
 stage('SCM Checkout'){
-      		 git credentialsId: 'gitlogin', git branch: 'master', url: 'https://github.com/ganes891/my-app'
+      		 git credentialsId: 'gitlogin', git branch: 'master', url: 'https://github.com/ganes891/apache_branch.git'
    			}
 stage('Build docker Images') {
 			dir ('/tmp/workspace/devproject_pip') {
